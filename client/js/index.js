@@ -43,12 +43,15 @@ fetchUserData();
 
 const userForm = document.getElementById('userData');
 
-async function formSubmit(){
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value.trim();
-    const confirmPassword = document.getElementById('confirmPassword').value.trim();
-    // تحقق من تطابق password و confirmPassword
+formSubmit.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var userName = document.getElementById('name').value;
+    var userEmail = document.getElementById('email').value;
+    var userPassword = document.getElementById('password').value;
+    var userConfirmPassword = document.getElementById('confirmPassword').value;
+    console.log(userName, userEmail, userPassword, userConfirmPassword);
+
+        // تحقق من تطابق password و confirmPassword
     if (password !== confirmPassword) {
         alert('Passwords do not match!');
         return;
@@ -58,3 +61,4 @@ async function formSubmit(){
     const data = await res.json();
     console.log(data);
 }
+);
