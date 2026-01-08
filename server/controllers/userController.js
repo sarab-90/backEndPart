@@ -5,6 +5,7 @@ export const registerUser = async (req, res) => {
     const {name,email,password} = req.body;
 
     try {
+        //bcrypt password : تشفير كلمة المرور قبل تخزينها في قاعدة البيانات
         const salt  = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
 
@@ -21,7 +22,6 @@ export const registerUser = async (req, res) => {
     }
 
 }
-
 export const loginUser = async(req,res) =>{
     const {email,password} = req.body;
 
@@ -53,9 +53,10 @@ export const getAllUsers = async(req,res) =>{
 
 export const searchUsers = async(req,res) =>{
     const {name, email, id} = req.body;
+
     
     try {
-        const users = await User.find({name:name});
+        const users = await User.find({name:name},{email:email},{_id:id});
         if (users.length < 1){
             res.status(404).json({message:"No users found"})
         }
