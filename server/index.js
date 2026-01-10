@@ -18,8 +18,8 @@ app.use(express.json());
  
 app.use('/api/users',userRoutes);
 app.use('/api/products',productsRoutes);
-app.use('/api/categories', categoriesRoutes)
-app.use('/api/auth',authRoutes)
+app.use('/api/categories', categoriesRoutes);
+app.use('/api',authRoutes)
 
 const PORT = 5002
 app.listen(PORT, ()=> console.log(`Server runing on port ${PORT}`))
