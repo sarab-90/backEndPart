@@ -7,10 +7,14 @@ import { adminOnly } from '../middleware/adminMiddleware.js';
 const router = express.Router();
 
 router.post('/addCategory',protect, adminOnly ,addCategory);
+
 router.get('/getAllCategories',protect, getAllCategories);
-router.get('/getCategoryById', protect, getCategoryById);
-router.put('/updateCategory', protect, adminOnly, updateCategory);
-router.delete('/deleteCategory', protect, adminOnly, deleteCategory);
+
+router.get('/getCategoryById/:id', protect, getCategoryById);
+
+router.put('/updateCategory/:id', protect, adminOnly, updateCategory);
+
+router.delete('/deleteCategory/:id', protect, adminOnly, deleteCategory);
 
 
 

@@ -22,7 +22,7 @@ export const addProduct = async (req, res) => {
 //get all products
 export const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({});
+        const products = await Product.find();
         if (products.length === 0){
             return res.status(200).json({ products: [] ,message: "No Products found"})
         }

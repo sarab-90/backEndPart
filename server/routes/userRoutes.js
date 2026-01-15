@@ -4,6 +4,7 @@ import { getAllUsers, getUserById, searchUsers, deleteUser, updateUser} from '..
 import { protect } from '../middleware/authMiddleware.js';
 import { adminOnly } from '../middleware/adminMiddleware.js';
 
+
 const router = express.Router();
 
 router.get('/user/:id', protect, getUserById)

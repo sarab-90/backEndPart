@@ -20,7 +20,7 @@ export const addCategory  = async (req , res) => {
 // get all Category
 export const getAllCategories = async (req, res) => {
     try {
-        const category = await Category.find({});
+        const category = await Category.find();
         if (category.length === 0){
             return res.status(200).json({category: [], message: "No categories found"})
         }
