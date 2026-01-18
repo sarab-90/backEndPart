@@ -3,25 +3,26 @@ import bcrypt from "bcryptjs";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({});
+    const users = await User.find();
+    console.log("users", users);
     res.status(200).json({ users: users });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 // search users by name or email and id
-export const getUserById = async (req, res) =>{
-  const {id} = req.params;
+export const getUserById = async (req, res) => {
+  const { id } = req.params;
   try {
     const user = await User.findById(id);
-    if (!user){
-      return res.status(404).json({message: "User not found"});
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-    return res.status(200).json({user:user})
+    return res.status(200).json({ user: user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
 
 export const searchUsers = async (req, res) => {
   const { name, email, id } = req.body;
@@ -30,7 +31,7 @@ export const searchUsers = async (req, res) => {
     const users = await User.find(
       { name: name },
       { email: email },
-      { _id: id }
+      { _id: id },
     );
     if (users.length < 1) {
       res.status(404).json({ message: "No users found" });
@@ -63,7 +64,7 @@ export const updateUser = async (req, res) => {
     const userToUpdate = await User.findByIdAndUpdate(
       id,
       { name, email },
-      { new: true }
+      { new: true },
     );
     if (!userToUpdate) {
       return res.status(404).json({ message: "User not found" });

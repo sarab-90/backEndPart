@@ -31,7 +31,7 @@ export const register = async (req, res) => {
 
         const hashPassword = await bcrypt.hash(password, 10); // 10 = salt rounds
 
-        const newUser = User.create({name, email, password: hashPassword , role:"user"});
+        const newUser = await User.create({name, email, password: hashPassword , role:"user"});
         
         return res.status(201).json({message: "User registered successfully", User:newUser})
     
@@ -64,10 +64,43 @@ export const login = async (req, res) => {
             process.env.JWT_SECRET,
             {expiresIn: "1h"}
         );
+        // تخزين token في >> cookies
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", // = false in development
+            sameSite: "strict",
+            maxAge: 3600000 // = 1 hour
+        });
 
         return res.status(200).json({message: "Login successfull", User:existingUser, token})
     
     } catch (error) {
         return res.status(500).json({message: "Server Error"});
     }
+}
+
+// get current user 
+export const getCurrentUser = async (req, res) => {
+    // get current user from the id in the tokens
+    try {
+        const currentUser = await User.findById(req.User.id).select("-password");
+        console.log("Current User: ", currentUser); // debugging line > تصحيح الخطأ
+        if (!currentUser){
+            return res.status(404).json({message: "User not found"});
+        }
+        return res.status(200).json({User: currentUser});
+    } catch (error) {
+        return res.status(500).json({message: "Server Error"});
+    }
+}
+
+// logout logic
+export const logout = async (req, res) => {
+    res.cookie("token", "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        expires: new Date(0) 
+    });
+    return res.status(200).json({message: "Logout successful"});
 }

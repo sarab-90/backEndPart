@@ -12,27 +12,26 @@ function Register(){
 
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         try {
             const response = await api.post("/auth/register",{name, email, password, confirmPassword});
-            if (response.status !== 200) {
+            if (response.status !== 201) {
                 toast.error(response.data.message);
+                return;
             }
-            const {User} = response.data;
-            localStorage.setItem("User", JSON.stringify(User));
-            toast.success(response.data.message)
+            toast.success(response.data.message) 
 
-            navigate('/userDashboard');
+            navigate('/login');
 
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Login failed');
+            toast.error(error.response?.data?.message || 'Register failed');
         }
     }
     return(
         <>
             <div>Register</div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleRegister}>
                 <div>
                     <label htmlFor="name">Name</label>
                     <input type="text" 
@@ -62,7 +61,7 @@ function Register(){
                 </div>
                 <div>
                     <label htmlFor="confirmPassword">Confirm Password</label>
-                    <input type="Password" 
+                    <input type="password" 
                     id="confirmPassword"
                     name="confirmPassword"
                     value={confirmPassword}
