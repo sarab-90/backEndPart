@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api from "../../../api.js";
+import Header from "../../Layout/Header.jsx";
 
 function DisplayUsers() {
   const [users, setUsers] = useState([]);
@@ -28,12 +29,27 @@ function DisplayUsers() {
       console.log(error);
     }
   };
+// delete user
+  const handleDelete = async (userId) => {
+    try {
+      const res = await api.delete(`/deleteUser/${userId}`);
+      if (res.status !== 200) {
+        setUsers((prev) => prev.filter((user) => user._id !== userId));
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      toast.error("Failed to delete user");
+      console.log(error);
+    }
+  }
+
   // fetch users
   useEffect(() => {
     fetchUsers();
   }, []);
   return (
     <>
+      <Header/>
       <h3>Users</h3>
       <table>
         <thead>
@@ -55,7 +71,7 @@ function DisplayUsers() {
                 <td>{user.role}</td>
                 <td>
                   <button>Edit</button>
-                  <button>Delete</button>
+                  <button onClick={() => handleDelete(user._id)}>Delete</button>
                 </td>
               </tr>
             );

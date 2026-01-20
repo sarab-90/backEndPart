@@ -1,15 +1,13 @@
 import React from "react";
-import DisplayProduct from "./Products/DisplayProduct.jsx";
-import DisplayCategories from "./Categories/DisplayCategories.jsx";
-import DisplyUsers from "./Users/DisplayUsers.jsx";
-
+import Header from "../Layout/Header.jsx";
+import Footer from "../Layout/Footer.jsx";
 function AdminDashboard (){
     return(
         <>
+        <Header/>
         <h1>Admin Dashboard</h1>
-        <DisplyUsers/>
-        <DisplayCategories/>
-        <DisplayProduct/>   
-        </>) 
+        <Footer/>
+        </>
+        ) 
 }
 export default AdminDashboard;

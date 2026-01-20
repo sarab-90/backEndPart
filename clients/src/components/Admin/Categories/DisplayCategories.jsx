@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api from "../../../api.js";
+import Header from "../../Layout/Header.jsx";
 
 function DisplayCategories (){
     const [categories, setCategories] = useState([]);
@@ -22,12 +23,26 @@ function DisplayCategories (){
             console.log(error);
         }
     };
+    // delete category
+    const handleDelete = async (categoryId) => {
+        try {
+            const res = await api.delete(`/deleteCategory/${categoryId}`);
+            if (res.status === 200) {
+                setCategories((prev) => prev.filter((category) => category._id !== categoryId));
+                toast.success(res.data.message);
+            }
+        } catch (error) {
+            toast.error("Failed to delete category");
+            console.log(error);
+        }
+    }
     // fetch categories
         useEffect(() => {
             fetchCategories();
         }, []);
     return(
         <>
+        <Header/>
         <h3>Categories</h3>
         <table>
             <thead>
@@ -47,7 +62,7 @@ function DisplayCategories (){
                             <td>{category.description}</td> 
                             <td>
                                 <button>Edit</button>
-                                <button>Delete</button> 
+                                <button onClick={() => handleDelete(category._id)}>Delete</button> 
                             </td>
                         </tr>
                     );

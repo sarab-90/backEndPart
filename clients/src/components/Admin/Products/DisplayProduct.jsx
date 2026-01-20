@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api from "../../../api.js";
+import Header from "../../Layout/Header.jsx";
 
 function DisplayProduct (){
     const [products, setproducts] = useState([]);
@@ -22,13 +23,26 @@ function DisplayProduct (){
                 toast.error("Failed to fetch products")
             }
         };
-        
+        // delete product
+        const handleDelete = async (productId) => {
+            try {
+                const res = await api.delete(`/admin/products/${productId}`);
+                if (res.status === 200) {
+                    setproducts((prev) => prev.filter((product) => product._id !== productId));
+                    toast.success(res.data.message);
+                }
+            } catch (error) {
+                toast.error("Failed to delete product");
+                console.log(error);
+            }
+        }       
         // fetch products
         useEffect(() => {
             fetchProducts();
         }, []); 
     return(
         <>
+        <Header/>
         <h3>Products</h3>
         <table>
             <thead>
@@ -63,7 +77,7 @@ function DisplayProduct (){
                             <td>{product.category}</td>
                             <td>
                                 <button>Edit</button>
-                                <button>Delete</button>
+                                <button onClick={() => handleDelete(product._id)}>Delete</button>
                             </td>
                         </tr>
                     );
