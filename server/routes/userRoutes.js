@@ -6,6 +6,7 @@ import {
   searchUsers,
   deleteUser,
   updateUser,
+  updateUserRole,
 } from "../controllers/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { adminOnly } from "../middleware/adminMiddleware.js";
@@ -18,8 +19,10 @@ router.get("/allUsers", protect, adminOnly, getAllUsers);
 
 router.post("/searchUsers", searchUsers);
 
-router.delete("/deleteUser/:id", protect, deleteUser);
+router.delete("/deleteUser/:id", protect, adminOnly, deleteUser);
 
 router.put("/updateUser/:id", protect, updateUser);
+
+router.put("/updateRole/:id", protect, adminOnly, updateUserRole);
 
 export default router;

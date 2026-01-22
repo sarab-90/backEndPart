@@ -5,18 +5,22 @@ export const addProduct = async (req, res) => {
     const {name, price, description, thumbnail , stock} = req.body;
 
     try {
-        if (!name || !price || !thumbnail || stock === undefined) {
+        if (!name || !price || !thumbnail  || !description || stock === undefined ) {
             return res.status(400).json({message:"Name, price, thumbnail and stock are required"})
         }
         const numberPrice = Number(price);
+        if (isNaN(numberPrice)){
+            return res.status(400).json({message:"Price must be a number"})
+        }
         const newProduct = await Product.create({
-            name, numberPrice , description, thumbnail , stock
+            name, price: numberPrice , description, thumbnail , stock
         });
         return res.status(201).json({
             product: newProduct, message: "Product created successfully"
         })
     } catch (error) {
-        res.status(500).json({message: "Server Error",error})
+        console.error(error);
+        res.status(500).json({message: "Server Error"})
     }
 }
 //get all products

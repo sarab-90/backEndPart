@@ -6,6 +6,11 @@ import Header from "../../Layout/Header.jsx";
 
 function DisplayCategories (){
     const [categories, setCategories] = useState([]);
+    const [showForm, setShowForm] = useState(false);
+    const [newCategory, setNewCategory] = useState({
+        name: "",
+        description: "",
+    });
 
     // fetch Categories
     const fetchCategories = async () => {
@@ -36,6 +41,26 @@ function DisplayCategories (){
             console.log(error);
         }
     }
+    // add new category
+    const handleAddCategory = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await api.post('/addCategory', newCategory);
+
+            if (res.status !== 201) {
+                toast.error(res.data.message);
+                return;
+            }
+            setCategories((prev) => [...prev, newCategory]);
+            toast.success("Category added successfully");
+            setShowForm(false);
+            fetchCategories();
+        } catch (error) {
+            toast.error("Failed to add category");
+            console.log(error);
+        }
+    }
+
     // fetch categories
         useEffect(() => {
             fetchCategories();
@@ -44,6 +69,31 @@ function DisplayCategories (){
         <>
         <Header/>
         <h3>Categories</h3>
+        <button onClick={() => setShowForm(!showForm)}>Add New </button>
+        {showForm && (
+            <form onSubmit={handleAddCategory}>
+                <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    placeholder="Category Name"
+                    onChange={(e) =>
+                        setNewCategory({ ...newCategory, name: e.target.value })}
+                    required
+                />
+                <input
+                    type="text"
+                    name="description"
+                    id="description"
+                    placeholder="Category Description"
+                    onChange={(e) =>
+                        setNewCategory({ ...newCategory, description: e.target.value })}
+                    required
+                />  
+                <button type="submit">Add</button>
+                </form>
+        )}
+            <div>
         <table>
             <thead>
                 <tr>
@@ -69,8 +119,8 @@ function DisplayCategories (){
                 })}
             </tbody>
         </table>
+        </div>
         </>
-
     )
 }
 export default DisplayCategories;

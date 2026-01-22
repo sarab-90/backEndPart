@@ -74,3 +74,21 @@ export const updateUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// update role of user
+export const updateUserRole = async (req, res) => {
+  const { id } = req.params;
+  const { newRole } = req.body;
+  try {
+    const roleUpdated = await User.findByIdAndUpdate(
+      id,
+      { role: newRole },
+      { new: true },
+    );
+    if (!roleUpdated) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ message: "User role updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

@@ -15,7 +15,7 @@ function App() {
 
   return (
     <>
-        {/* اين يظهر المسج */}
+    {/* اين يظهر المسج */}
     <Toaster position="top-center"/>
     <BrowserRouter>
       <Routes>
