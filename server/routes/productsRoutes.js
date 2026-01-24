@@ -21,12 +21,6 @@ router.get("/products/:id", protect, getProductById);
 
 router.delete("/admin/products/:id", protect, adminOnly, deleteProduct);
 
-router.put(
-  "/admin/products/:id",
-  protect,
-  checkRole("seller"),
-  adminOnly,
-  updateProduct,
-);
+router.put("/admin/products/:id", protect, adminOnly, updateProduct);
 
 export default router;

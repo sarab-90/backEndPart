@@ -11,6 +11,8 @@ function DisplayCategories (){
         name: "",
         description: "",
     });
+    const [editId, setEditId] = useState(null);
+    const [editCategory, setEditCategory] = useState({})
 
     // fetch Categories
     const fetchCategories = async () => {
@@ -60,6 +62,25 @@ function DisplayCategories (){
             console.log(error);
         }
     }
+    // save edited category
+    const  handleSaveEdit = async (categoryId) => {
+        try {
+            const res = await api.put(`/updateCategory/${categoryId}`, editCategory);
+            if (res.status === 200) {
+                setCategories((prev) =>
+                    prev.map((category) =>
+                        category._id === categoryId ? { ...category, ...editCategory } : category
+                ));
+                toast.success(res.data.message || "Category updated successfully");
+                setEditId(null);
+                fetchCategories();
+            }
+        } catch (error) {
+            toast.error("Failed to update category");
+            console.log(error);
+        }
+    }
+
 
     // fetch categories
         useEffect(() => {
@@ -69,6 +90,7 @@ function DisplayCategories (){
         <>
         <Header/>
         <h3>Categories</h3>
+
         <button onClick={() => setShowForm(!showForm)}>Add New </button>
         {showForm && (
             <form onSubmit={handleAddCategory}>
@@ -105,13 +127,57 @@ function DisplayCategories (){
             </thead>
             <tbody>
                 {categories.map((category, index) => {
+                    const isEditing = editId === category._id;
                     return (
                         <tr key={category._id}>
-                            <td>{index + 1}</td>
-                            <td>{category.name}</td>
-                            <td>{category.description}</td> 
+                            <td>{index + 1}
+                            </td>
                             <td>
-                                <button>Edit</button>
+                                {isEditing ?(
+                                    <input
+                                        type="text"
+                                        value={editCategory.name}
+                                        onChange={(e) =>
+                                            setEditCategory({...editCategory, name: e.target.value })}
+                                    />
+                                ):(
+                                    category.name
+                                )}
+                            </td>
+                            <td>
+                                {isEditing ?(
+                                    <input
+                                        type="text"
+                                        value={editCategory.description}
+                                        onChange={(e) =>
+                                            setEditCategory({ ...editCategory, description: e.target.value })}
+                                    />
+                                ):(
+                                    category.description || "No Description"
+                                )}
+                            </td> 
+                            <td>
+                                {isEditing ? (
+                                    <>
+                                    <button onClick={() => handleSaveEdit(category._id)}>
+                                        Save
+                                        </button>
+                                    <button onClick={() => setEditId(null)}>
+                                        Cancel
+                                        </button>
+                                    </>
+                                ):(
+                                    <button onClick={() => {
+                                        setEditId(category._id);
+                                        setEditCategory({
+                                            name: category.name,
+                                            description: category.description,
+                                        });
+                                    }}>
+                                        Edit
+                                    </button>
+                                )}
+                                
                                 <button onClick={() => handleDelete(category._id)}>Delete</button> 
                             </td>
                         </tr>

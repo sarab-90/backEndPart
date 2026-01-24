@@ -15,6 +15,9 @@ function DisplayProduct (){
         thumbnail: "",
         category: "",
     });
+    const [editId, setEditId] = useState(null);
+    const [editProduct, setEditProduct] = useState({})
+    const [searchItem, setSearchItem] = useState("");
 
     // fetch Products 
         const fetchProducts = async () => {
@@ -64,6 +67,24 @@ function DisplayProduct (){
                 console.log(error);
             }
         }
+        // save edited product
+        const handleSaveEdit = async (productId) => {
+            try {
+                const res = await api.put(`/admin/products/${productId}`, editProduct);
+                if (res.status === 200) {
+                    setproducts((prev) =>
+                        prev.map((product) =>
+                            product._id === productId ? { ...product, ...editProduct } : product
+                    ));
+                    toast.success(res.data.message || "Product updated successfully");
+                    setEditId(null);
+                    fetchProducts();
+                }
+            } catch (error) {
+                toast.error("Failed to save product");
+                console.log(error);
+            }
+        }
 
         // fetch products
         useEffect(() => {
@@ -73,6 +94,13 @@ function DisplayProduct (){
         <>
         <Header/>
         <h3>Products</h3>
+        <br/>
+        <input
+        type="text"
+        placeholder="Search Product"
+        value={searchItem}
+        onChange={(e) => setSearchItem(e.target.value)}
+        />
         <button onClick={() => setShowForm(!showForm)}>Add New</button>
         {showForm && (
             <form onSubmit={handleAddProduct}>
@@ -147,14 +175,69 @@ function DisplayProduct (){
                 </tr>
             </thead>
             <tbody>
-                {products.map((product, index) => {
+                {products.filter(
+                    (product) => {
+                        return(
+                        product.name
+                            .toLowerCase()
+                            .includes(searchItem.toLowerCase() ||
+                            product.category
+                            .toLowerCase()
+                            .includes(searchItem)
+                        ));})
+                .map((product, index) => {
+                    const isEditing = editId === product._id;
                     return (
                         <tr key={product._id}>
                             <td>{index + 1}</td>
-                            <td>{product.name}</td>
-                            <td>{product.price}</td>
-                            <td>{product.stock}</td>
-                            <td>{product.description}</td>
+                            <td>
+                                {isEditing ? (
+                                    <input
+                                        type="text"
+                                        value={editProduct.name}
+                                        onChange={(e) => 
+                                            setEditProduct({...editProduct, name: e.target.value})}
+                                    />
+                                ):(
+                                    product.name
+                                )}
+                            </td>
+                            <td>
+                                {isEditing ? (
+                                    <input
+                                        type="text"
+                                        value={editProduct.price}
+                                        onChange={(e) => 
+                                            setEditProduct({...editProduct, price: e.target.value})}
+                                    />
+                                ):(
+                                    product.price
+                                )}
+                            </td>
+                            <td>
+                                {isEditing ? (
+                                    <input
+                                        type="text"
+                                        value={editProduct.stock}
+                                        onChange={(e) => 
+                                            setEditProduct({...editProduct, stock: e.target.value})}
+                                    />
+                                ):(
+                                    product.stock
+                                )}
+                            </td>
+                            <td>
+                                {isEditing ? (
+                                    <input
+                                        type="text"
+                                        value={editProduct.description}
+                                        onChange={(e) => 
+                                            setEditProduct({...editProduct, description: e.target.value})}
+                                    />
+                                ):(
+                                    product.description || "No Description"
+                                )}
+                            </td>
                             <td>
                                 <img
                                     src={product.thumbnail}
@@ -165,7 +248,28 @@ function DisplayProduct (){
                                 </td>
                             <td>{product.category}</td>
                             <td>
-                                <button>Edit</button>
+                                {isEditing ? (
+                                    <>
+                                    <button onClick={() => handleSaveEdit(product._id)}>
+                                        Save
+                                        </button>   
+                                    <button onClick={() => setEditId(null)}>
+                                        Cancel
+                                        </button>
+                                    </> 
+                                ):(
+                                    <button onClick={() => {
+                                        setEditId(product._id);
+                                        setEditProduct({
+                                            name: product.name,
+                                            price: product.price,
+                                            stock: product.stock,
+                                            description: product.description,
+                                        });
+                                    }}>
+                                        Edit
+                                    </button>
+                                )}
                                 <button onClick={() => handleDelete(product._id)}>Delete</button>
                             </td>
                         </tr>

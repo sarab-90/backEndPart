@@ -8,6 +8,7 @@ import Header from "../../Layout/Header.jsx";
 function DisplayUsers() {
   const [users, setUsers] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [SearchItem, setSearchItem] = useState("");
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
@@ -105,6 +106,16 @@ function DisplayUsers() {
         <Typography variant="h5" fontWeight="bold">
           Users
         </Typography>
+        {/* search user */}
+        <TextField
+          label="Search User"
+          variant="outlined"
+          size="small"
+          value={SearchItem}
+          onChange={(e) => setSearchItem(e.target.value)}
+        >
+        </TextField>
+        
         <Button
           variant="contained"
           color="secondary"
@@ -114,7 +125,7 @@ function DisplayUsers() {
         </Button>
       </Box>
       {showForm && (
-        <Card sx={{ maxWidth: 500, p: 2, mb: 4 ,backgroundColor: "#f9f9f9", }}>
+        <Card sx={{ maxWidth: 500, p: 2, mb: 4, backgroundColor: "#f9f9f9" }}>
           <Typography variant="h6" fontWeight="bold" mb={2}>
             Add New User
           </Typography>
@@ -195,7 +206,15 @@ function DisplayUsers() {
           </tr>
         </thead>
         <tbody>
-          {users.map((user, index) => {
+          {users.filter(
+            (user) => {
+              return(
+              user.name
+                .toLowerCase()
+                .includes(SearchItem.toLowerCase()) ||
+                user.email.includes(SearchItem)
+              );})
+          .map((user, index) => {
             return (
               <tr key={user._id}>
                 <td>{index + 1}</td>
