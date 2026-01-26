@@ -92,3 +92,53 @@ export const updateUserRole = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// change password
+export const changePassword = async (req, res) => {
+  const { id } = req.params;
+  const { newPassword, newConfirmPassword, oldPassword } = req.body;
+  try {
+    const user = await User.findById(id);
+   
+    // check if old password is correct
+    const isCorrect = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isCorrect) {
+      return res.status(400).json({ message: "Old password is incorrect" });
+    }
+    if (newPassword !== newConfirmPassword) {
+      return res
+        .status(400)
+        .json({ message: "New password and confirm password do not match" });
+    }
+    
+    if (oldPassword === newPassword) {
+      return res
+        .status(400)
+        .json({ message: "New password cannot be same as old password" });
+    }
+    // تحقق من قوة password
+    const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*])/;
+    if (newPassword.length < 8 || !regex.test(newPassword)) {
+      return res
+        .status(400)
+        .json({
+          message:
+            "Password must be at least 8 characters long and contain at least one number and one special character",
+        });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await User.findByIdAndUpdate(
+      id,
+      { password: hashedPassword },
+      { new: true },
+    );
+
+    return res.status(200).json({ message: "Password changed successfully" });
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: error.message });
+  }
+};

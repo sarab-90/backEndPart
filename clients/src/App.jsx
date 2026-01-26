@@ -10,6 +10,7 @@ import DisplyUsers from './components/Admin/Users/DisplayUsers.jsx';
 import DisplayProduct from './components/Admin/Products/DisplayProduct.jsx';
 import About from './components/Shared/About.jsx';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
+import Profile from './components/Profile/Profile.jsx';
 
 function App() {
 
@@ -29,7 +30,7 @@ function App() {
         <Route path='/Admin/Dashboard/users' element={<DisplyUsers/>}/>
         <Route path='/Admin/Dashboard/categories' element={<DisplayCategories/>}/>
         <Route path='/Admin/Dashboard/products' element={<DisplayProduct/>}/>
-
+        <Route path='/profile' element= {<Profile/>}/>
       </Routes>
     </BrowserRouter>
     </> 

@@ -106,6 +106,7 @@ function DisplayUsers() {
         <Typography variant="h5" fontWeight="bold">
           Users
         </Typography>
+        <br/>
         {/* search user */}
         <TextField
           label="Search User"
